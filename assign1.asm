@@ -1,0 +1,200 @@
+.MODEL SMALL
+.STACK 100h
+.DATA
+
+;Declaring and Defining Values in Variables
+
+AskKey  BYTE  "Press a key: $"
+Say    BYTE  "You have enter a $"
+Digit   BYTE  	"Digit: $"
+Vowel  BYTE 	"Vowel: $"
+Capital  BYTE  "Capital $"
+Lower    BYTE 	"Lower $"
+Consonant  BYTE "Consonant: $"
+Invalid   BYTE "INVALID INPUT!! $"
+
+.CODE
+
+MAIN PROC
+	
+MOV AX,@data
+MOV DS,AX
+
+;Coding Start!!
+
+MOV AH,9
+MOV DX,OFFSET AskKey
+INT 21h
+
+;For New Line
+
+MOV AH,2
+MOV DL,10
+INT 21h
+ 
+;user input
+
+MOV AH,1
+INT 21h
+
+;Saving input Value in a Register
+
+MOV CL,AL
+
+;For New Line
+
+MOV AH,2
+MOV DL,10
+INT 21h
+
+;Differentiating b/w Digit And Alphabet (Lower-Case or Upper-Case)
+    
+CMP CL,'0'
+JGE CHECK_FOR_DIGIT
+JMP INVALID_INPUT
+	
+CHECK_FOR_DIGIT:
+
+CMP CL,'9'
+JLE IS_DIGIT
+JG CHECK_FOR_ALPHABET
+
+CHECK_FOR_ALPHABET:
+
+CMP CL,'A'
+JL INVALID_INPUT
+JGE CHECK_FOR_CAPITAL
+
+CHECK_FOR_CAPITAL:
+
+CMP CL,'Z'
+JLE IS_CAPITAL
+JG CHECK_FOR_SMALL
+
+CHECK_FOR_SMALL:
+
+CMP CL,'a'
+JGE IS_LOWER
+JL INVALID_INPUT
+
+IS_DIGIT:
+
+JMP PRINT_DIGIT
+
+IS_CAPITAL:
+
+MOV AH,9
+MOV DX,OFFSET Say
+INT 21h
+				
+MOV AH,9
+MOV DX,OFFSET Capital
+INT 21h
+				
+JMP FIND_VOWEL_CONSONANT
+
+IS_LOWER:
+
+MOV AH,9
+MOV DX,OFFSET Say
+INT 21h
+				
+MOV AH,9
+MOV DX,OFFSET Lower
+INT 21h
+				
+MOV DL,'L'
+JMP FIND_VOWEL_CONSONANT
+	
+;Differentiating b/w Vowel and Consonant
+
+FIND_VOWEL_CONSONANT:
+							
+				
+CMP CL,'A'  
+JE PRINT_VOWEL
+CMP CL,'E'  
+JE PRINT_VOWEL
+CMP CL,'I'  
+JE PRINT_VOWEL
+CMP CL,'O'  
+JE PRINT_VOWEL
+CMP CL,'U'  
+JE PRINT_VOWEL
+
+CMP CL,'a'  
+JE PRINT_VOWEL
+CMP CL,'e'  
+JE PRINT_VOWEL
+CMP CL,'i'  
+JE PRINT_VOWEL
+CMP CL,'o'  
+JE PRINT_VOWEL
+CMP CL,'u'  
+JE PRINT_VOWEL
+							
+;Is A Consonant
+
+JMP PRINT_CONSONANT
+	
+;Printing Digit	
+
+PRINT_DIGIT:
+
+MOV AH,9
+MOV DX,OFFSET Say
+INT 21h
+
+MOV AH,9
+MOV DX,OFFSET Digit
+INT 21h
+
+MOV AH,2
+MOV DL,CL
+INT 21h
+
+JMP ENDING
+
+;Printing Consonant
+
+PRINT_CONSONANT: 
+
+MOV AH,9
+MOV DX,OFFSET Consonant
+INT 21h
+
+MOV AH,2
+MOV DL,CL
+INT 21h
+
+JMP ENDING
+
+PRINT_VOWEL: 
+
+MOV AH,9
+MOV DX,OFFSET Vowel
+INT 21h
+
+MOV AH,2
+MOV DL,CL
+INT 21h
+
+JMP ENDING
+
+INVALID_INPUT:
+
+MOV AH,9
+MOV DX,OFFSET Invalid
+INT 21h
+JMP ENDING
+
+;Program Ending
+
+ENDING:
+
+MOV AH,4CH
+INT 21h
+
+MAIN ENDP
+END MAIN
+			
